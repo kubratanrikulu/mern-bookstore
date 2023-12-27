@@ -17,10 +17,6 @@ app.use(express.json());
 
 app.use('/books', BookRouter);
 
-app.get('/', (req, res) => {
-  res.send('Merhaba, harun!');
-});
-
 const port = process.env.PORT || 3001;
 
 app.listen(port, () => {

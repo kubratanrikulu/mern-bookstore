@@ -48,3 +48,27 @@ module.exports.addBook = async (req, res) => {
         })
     }
 }
+
+module.exports.getBookById = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const book = await Book.findById(id);
+
+        if (!book) {
+            return res.status(404).json({
+                success: false,
+                errorMessage: "Book not found!"
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            data: book
+        });
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            errorMessage: err.message
+        });
+    }
+};
