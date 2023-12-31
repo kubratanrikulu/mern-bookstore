@@ -4,13 +4,25 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import RelatedBook from "../components/RelatedBooks";
 import { getBooks } from "../redux/slice/bookSlice";
-import { addToCart } from "../redux/slice/cardSlice";
+import { addToCart, } from "../redux/slice/cardSlice";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
 const BookDetails = () => {
     const dispatch = useDispatch();
     const { id } = useParams();
     const books = useSelector((state) => state.books.data);
-    const [count, setCount] = useState(0);
-
+    const [count, setCount] = useState(1);
+    const showSuccessPopup = () => {
+        toast('Product successfully added to the cart!', {
+            position: toast.POSITION.TOP_RIGHT,
+            progressBarColor: '#f86d72',
+            style: {
+                color: '#f86d72',
+            },
+        });
+    };
     useEffect(() => {
         dispatch(getBooks());
     }, [dispatch]);
@@ -19,9 +31,11 @@ const BookDetails = () => {
     const book = books.find((book) => book._id === id);
 
     const handleAddToCart = () => {
-        const selectedBook = books.find((book) => book._id === id);
-        dispatch(addToCart(selectedBook));
-        console.log(selectedBook);
+        if (count > 0) {
+            const selectedBook = books.find((book) => book._id === id);
+            dispatch(addToCart({ book: selectedBook, count }));
+            showSuccessPopup()
+        }
     };
 
     const decreaseCount = () => {
@@ -34,14 +48,14 @@ const BookDetails = () => {
         setCount(count + 1);
     };
     if (!book) {
-        return <div>Kitap bulunamadı.</div>;
+        return <div>Book is not found</div>;
     }
     return (
         <>
-            <div className="container mx-auto grid grid-cols-2 py-10">
-                <div className="flex justify-center" > <img src={book.posterPath} alt="" /></div>
-                <div className="flex flex-col gap-y-6">
-                    <h1 className="font-serif text-2xl text-[#2b2b2b] font-thin ">{book.book}</h1>
+            <div className="container mx-auto grid lg:grid-cols-2 py-10">
+                <div className="flex justify-center" > <img src={book.posterPath} alt="book_poster" className="lg:h-max h-2/3" /></div>
+                <div className="flex flex-col gap-y-6 px-4">
+                    <h1 className="font-serif text-2xl text-footerText font-thin">{book.book}</h1>
                     <div>
                         <StarRatings
                             rating={book.score}
@@ -51,8 +65,8 @@ const BookDetails = () => {
                             starSpacing="2px"
                         />
                     </div>
-                    <h1 className="text-[#f86d72] font-serif text-2xl">{book.price}</h1>
-                    <p className="text-[#666] font-raleway">{book.summary}</p>
+                    <h1 className="text-primary font-serif text-2xl">{book.price}$</h1>
+                    <p className="text-footerText font-raleway">{book.summary}</p>
                     <div className="flex gap-x-5  gap-y-5 border-b border-[#ebe9eb] py-5">
                         <div className="flex">
                             <button
@@ -70,29 +84,30 @@ const BookDetails = () => {
                             </button>
                         </div>
                         <div>
-                            <button type="button" className="bg-[#f86d72] px-5 py-2 text-white flex items-center gap-x-2" onClick={handleAddToCart}>
+                            <button type="button" className="bg-primary px-5 py-2 text-white flex items-center gap-x-2" onClick={handleAddToCart}>
                                 <i className="fa-solid fa-basket-shopping"></i>Add to Chart
                             </button>
                         </div>
                     </div>
                     <div className="flex flex-col gap-y-3">
                         <p className=" font-raleway">
-                            <b className="text-lg">Author:</b> <span className="text-[#666] font-light">{book.author}</span>
+                            <b className="text-lg">Author:</b> <span className="text-footerText font-light">{book.author}</span>
                         </p>
                         <p className="font-raleway">
-                            <b className="text-lg">Categories:</b> <span className="text-[#666] font-light">{book.category}</span>
+                            <b className="text-lg">Categories:</b> <span className="text-footerText font-light">{book.category}</span>
                         </p>
                         <p className="font-raleway">
-                            <b className="text-lg">Page count:</b> <span className="text-[#666] font-light">{book.pageCount}</span>
+                            <b className="text-lg">Page count:</b> <span className="text-footerText font-light">{book.pageCount}</span>
                         </p>
                         <p className="font-raleway">
-                            <b className="text-lg">Printg House:</b> <span className="text-[#666] font-light">{book.printingHouse}</span>
+                            <b className="text-lg">Printg House:</b> <span className="text-footerText font-light">{book.printingHouse}</span>
                         </p>
                     </div>
                 </div>
 
             </div>
             <RelatedBook />
+            <ToastContainer />
         </>
     );
 };
