@@ -2,8 +2,8 @@ import BookCard from "./BookCard"
 
 const PopularBook = () => {
     return (
-        <div className="popular-book bg-[#ebe9eb] flex flex-col gap-y-8 pt-5">
-            <h1 className="text-center">Popular Book</h1>
+        <div className="container mx-auto flex flex-col gap-y-8 pt-5 py-10">
+            <h1 className="text-center font-serif text-h1Color font-semibold  text-4xl">Popular Book</h1>
             <BookCard />
         </div>
     )
