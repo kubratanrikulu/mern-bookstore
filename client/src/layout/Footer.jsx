@@ -2,7 +2,7 @@ const Footer = () => {
     return (
         <>
             <footer>
-                <div className="grid grid-cols-1 sm:grid-cols-3 py-10">
+                <div className="grid grid-cols-1 sm:grid-cols-3 py-10 px-10">
                     <div className="text-footerText flex flex-col gap-y-8 lg:items-center">
                         <h1 className="border-b-2 border-primary font-font-ebGaramond ">
                             CONTACT US
