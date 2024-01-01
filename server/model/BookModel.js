@@ -48,7 +48,7 @@ const BookSchema = new mongoose.Schema({
         maxLength: 30
     },
     price: {
-        type: String,
+        type: Number,
         require: true
     },
     score: {
