@@ -1,51 +1,77 @@
-
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import { removeCartItem } from "../redux/slice/cardSlice";
-import { Link } from 'react-router-dom';
+import { setTotalCount } from "../redux/slice/cardSlice";
 const Chart = () => {
-    const [count, setCount] = useState(1);
-    const [totalPrice, setTotalPrice] = useState(0);
     const cartItems = useSelector((state) => state.cart.items);
-    const [books, setBooks] = useState([])
     const dispatch = useDispatch();
+
+    const [totalPrice, setTotalPrice] = useState(0);
+    const [books, setBooks] = useState([]);
 
     const handleRemoveItem = (itemId) => {
         dispatch(removeCartItem(itemId));
     };
-    const calculateTotalPrice = () => {
+
+    const calculateTotalPrice = useCallback(() => {
         let total = 0;
-        cartItems.forEach((item) => {
-            total += item.price * count;
-        });
+        let _totalCount = 0;
+        if (books && Object.values(books).length > 0) {
+            const _books = Object.values(books);
+            const count = Object.values(books).map((a) => {
+                _totalCount += a.length;
+                return {
+                    id: a[0]._id,
+                    count: a.length,
+                };
+            });
+            const idAndPrice = _books
+                .map((a) => a[0])
+                .map((b) => {
+                    return { id: b._id, price: b.price };
+                });
+
+            idAndPrice.forEach((item) => {
+                total += item.price * count.find((a) => a.id === item.id).count;
+            });
+        }
+        dispatch(setTotalCount(_totalCount));
         setTotalPrice(total);
-    };
+    }, [books, dispatch]);
+
     const findBook = (id) => {
-        for (let i = 0; i < books.length; i++) {
-            for (let j = 0; j < books[i].length; j++) {
-                if (books[i][j]._id === id) {
-                    return books[i][j];
+        const _books = Object.values(books);
+        for (let i = 0; i < _books.length; i++) {
+            for (let j = 0; j < _books[i].length; j++) {
+                if (_books[i][j]._id === id) {
+                    return _books[i][j];
                 }
             }
         }
-    }
+    };
+
     const decreaseBookCount = (id) => {
         const book = findBook(id);
-        const _books = books;
+        const _books = Object.values(books);
         if (book) {
             for (let i = 0; i < _books.length; i++) {
-                for (let j = 0; j < _books[i].length; j++) {
-                    if (_books[i][j]._id === id) {
-                        _books[i].splice(j, 1);
+                if (_books[i] && _books[i][0] && _books[i][0]._id === id) {
+                    if (Object.values(_books[i]).length <= 1) {
+                        handleRemoveItem(id);
+                        return;
                     }
+
+                    _books[i].splice(0, 1);
                 }
             }
         }
-        setBooks(_books)
-    }
+        setBooks(_books);
+    };
+
     const increaseBookCount = (id) => {
         const book = findBook(id);
-        const _books = books;
+        const _books = Object.values(books);
         if (book) {
             for (let i = 0; i < _books.length; i++) {
                 if (_books[i][0].category === book.category) {
@@ -53,11 +79,15 @@ const Chart = () => {
                 }
             }
         }
-        setBooks(_books)
-    }
+        setBooks(_books);
+    };
+
     useEffect(() => {
-        calculateTotalPrice();
-    }, [count, cartItems]);
+        if (books && Object.values(books).length > 0) {
+            calculateTotalPrice();
+        }
+    }, [cartItems, books, calculateTotalPrice, totalPrice]);
+
     useEffect(() => {
         function groupBy(arr, key) {
             return arr.reduce(function (rv, x) {
@@ -66,15 +96,12 @@ const Chart = () => {
             }, {});
         }
 
-        setBooks(groupBy(cartItems, 'book'))
+        setBooks(groupBy(cartItems, "book"));
     }, [cartItems]);
-    useEffect(() => {
-        console.log(books);
-    }, [books])
 
     return (
         <>
-            <div className='flex flex-col sm:flex-row container mx-auto'>
+            <div className="flex flex-col sm:flex-row container mx-auto">
                 <div className="w-full xl:w-8/12 mb-12 xl:mb-0 px-4 mx-auto mt-24">
                     <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded">
                         <div className="block w-full overflow-x-auto">
@@ -100,11 +127,21 @@ const Chart = () => {
                                     {Object.values(books).map((item, index, arr) => {
                                         return (
                                             <tr key={item[0]._id}>
-                                                <td>  <button onClick={() => handleRemoveItem(item[0]._id)} className="px-5">
-                                                    <i className="fa-regular fa-trash-can"></i>
-                                                </button></td>
+                                                <td>
+                                                    {" "}
+                                                    <button
+                                                        onClick={() => handleRemoveItem(item[0]._id)}
+                                                        className="px-5"
+                                                    >
+                                                        <i className="fa-regular fa-trash-can"></i>
+                                                    </button>
+                                                </td>
                                                 <td className="flex items-center gap-x-3 border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
-                                                    <img src={item[0].posterPath} alt="" className='h-16 w-12' />
+                                                    <img
+                                                        src={item[0].posterPath}
+                                                        alt=""
+                                                        className="h-16 w-12"
+                                                    />
                                                     {item[0].book}
                                                 </td>
                                                 <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">
@@ -118,9 +155,9 @@ const Chart = () => {
                                                         >
                                                             -
                                                         </button>
-                                                        <span className="border border-[#8f8f8f40] py-2 px-3">{
-                                                            arr[index].length
-                                                        }</span>
+                                                        <span className="border border-[#8f8f8f40] py-2 px-3">
+                                                            {arr[index].length}
+                                                        </span>
                                                         <button
                                                             className="border border-[#8f8f8f40] py-2 px-3"
                                                             onClick={() => increaseBookCount(item[0]._id)}
@@ -133,7 +170,7 @@ const Chart = () => {
                                                     {arr[index].length * item[0].price}$
                                                 </td>
                                             </tr>
-                                        )
+                                        );
                                     })}
                                 </tbody>
                             </table>
@@ -178,10 +215,11 @@ const Chart = () => {
                             </table>
                         </div>
                     </div>
-                    <button type="button" className=" bg-primary px-5 py-2 text-white flex items-center gap-x-2 shadow-md">
-                        <Link to='/checkout'>
-                            PROCEED TO CHECKOUT
-                        </Link>
+                    <button
+                        type="button"
+                        className=" bg-primary px-5 py-2 text-white flex items-center gap-x-2 shadow-md"
+                    >
+                        <Link to="/checkout">PROCEED TO CHECKOUT</Link>
                     </button>
                 </div>
             </div>

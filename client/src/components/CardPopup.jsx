@@ -3,26 +3,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { removeCartItem } from "../redux/slice/cardSlice";
 import { Link } from 'react-router-dom';
 const CardPopup = () => {
-    const [count, setCount] = useState(1);
-    const [totalPrice, setTotalPrice] = useState(0);
     const cartItems = useSelector((state) => state.cart.items);
     const [books, setBooks] = useState([])
     const dispatch = useDispatch();
 
     const handleRemoveItem = (itemId) => {
         dispatch(removeCartItem(itemId));
-        console.log(itemId);
     };
-    const calculateTotalPrice = () => {
-        let total = 0;
-        cartItems.forEach((item) => {
-            total += item.price * count;
-        });
-        setTotalPrice(total);
-    };
-    useEffect(() => {
-        calculateTotalPrice();
-    }, [count, cartItems]);
     useEffect(() => {
         function groupBy(arr, key) {
             return arr.reduce(function (rv, x) {
@@ -33,10 +20,6 @@ const CardPopup = () => {
 
         setBooks(groupBy(cartItems, 'book'))
     }, [cartItems]);
-    useEffect(() => {
-        console.log(books);
-    }, [books])
-
     return (
         <div className="p-6 bg-white shadow-xl z-10">
             <tbody className="bg-white z-50 p-10">
