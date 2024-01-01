@@ -20,15 +20,41 @@ const Chart = () => {
         });
         setTotalPrice(total);
     };
-    const decreaseCount = () => {
-        setCount(count - 1);
-        console.log('Decreased count:', count - 1);
-    };
-
-    const increaseCount = () => {
-        setCount(count + 1);
-        console.log('Increased count:', count + 1);
-    };
+    const findBook = (id) => {
+        for (let i = 0; i < books.length; i++) {
+            for (let j = 0; j < books[i].length; j++) {
+                if (books[i][j]._id === id) {
+                    return books[i][j];
+                }
+            }
+        }
+    }
+    const decreaseBookCount = (id) => {
+        const book = findBook(id);
+        const _books = books;
+        if (book) {
+            for (let i = 0; i < _books.length; i++) {
+                for (let j = 0; j < _books[i].length; j++) {
+                    if (_books[i][j]._id === id) {
+                        _books[i].splice(j, 1);
+                    }
+                }
+            }
+        }
+        setBooks(_books)
+    }
+    const increaseBookCount = (id) => {
+        const book = findBook(id);
+        const _books = books;
+        if (book) {
+            for (let i = 0; i < _books.length; i++) {
+                if (_books[i][0].category === book.category) {
+                    _books[i].push(book);
+                }
+            }
+        }
+        setBooks(_books)
+    }
     useEffect(() => {
         calculateTotalPrice();
     }, [count, cartItems]);
@@ -88,7 +114,7 @@ const Chart = () => {
                                                     <div className="flex">
                                                         <button
                                                             className="border border-[#8f8f8f40] py-2 px-3"
-                                                            onClick={decreaseCount}
+                                                            onClick={() => decreaseBookCount(item[0]._id)}
                                                         >
                                                             -
                                                         </button>
@@ -97,7 +123,7 @@ const Chart = () => {
                                                         }</span>
                                                         <button
                                                             className="border border-[#8f8f8f40] py-2 px-3"
-                                                            onClick={increaseCount}
+                                                            onClick={() => increaseBookCount(item[0]._id)}
                                                         >
                                                             +
                                                         </button>
