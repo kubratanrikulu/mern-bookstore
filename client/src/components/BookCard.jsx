@@ -10,6 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 const BookCard = () => {
     const dispatch = useDispatch();
     const { data: books, filter } = useSelector((state) => state.books);
+
     const showSuccessPopup = () => {
         toast('Product successfully added to the cart!', {
             position: toast.POSITION.TOP_RIGHT,
@@ -19,9 +20,6 @@ const BookCard = () => {
             },
         });
     };
-    useEffect(() => {
-        dispatch(getBooks());
-    }, [dispatch]);
     const filteredBooks = books.filter((item) => {
         const lowerCaseFilter = filter.toLowerCase();
         return (
@@ -34,6 +32,10 @@ const BookCard = () => {
         dispatch(addToCart({ book: selectedBook }));
         showSuccessPopup()
     };
+
+    useEffect(() => {
+        dispatch(getBooks());
+    }, [dispatch]);
     return (
         <>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-10 container mx-auto">

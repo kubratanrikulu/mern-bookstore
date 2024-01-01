@@ -2,9 +2,6 @@
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import slide1 from '../assets/images/slider2.webp'
-import slide2 from '../assets/images/slider3.webp'
-import slide3 from '../assets/images/slider1.webp'
 const Carousel = () => {
     const settings = {
         dots: true,
@@ -17,13 +14,13 @@ const Carousel = () => {
     return (
         <Slider {...settings}>
             <div>
-                <img src={slide1} alt="" />
+                <img src={"./slider1.webp"} alt="" />
             </div>
             <div>
-                <img src={slide2} alt="" />
+                <img src={"./slider2.webp"} alt="" />
             </div>
             <div>
-                <img src={slide3} alt="" />
+                <img src={"./slider3.webp"} alt="" />
             </div>
         </Slider>
     );
