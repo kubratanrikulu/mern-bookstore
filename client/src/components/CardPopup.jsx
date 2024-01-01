@@ -2,14 +2,18 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { removeCartItem } from "../redux/slice/cardSlice";
 import { Link } from 'react-router-dom';
-const CardPopup = () => {
-    const cartItems = useSelector((state) => state.cart.items);
-    const [books, setBooks] = useState([])
+const CardPopup = ({ setPopupVisible }) => {
     const dispatch = useDispatch();
+    const cartItems = useSelector((state) => state.cart.items);
+
+    const [books, setBooks] = useState([])
 
     const handleRemoveItem = (itemId) => {
         dispatch(removeCartItem(itemId));
     };
+    const handleClosePopup = () => {
+        setPopupVisible(false)
+    }
     useEffect(() => {
         function groupBy(arr, key) {
             return arr.reduce(function (rv, x) {
@@ -44,10 +48,10 @@ const CardPopup = () => {
                 })}
             </tbody>
             <div className="flex gap-x-3">
-                <Link to='/chart' className="text-footerText"><button type="button" className="bg-[#f86d72] px-5 py-2 text-white flex items-center gap-x-2">
+                <Link to='/chart' className="text-footerText"><button type="button" onClick={handleClosePopup} className="bg-[#f86d72] px-5 py-2 text-white flex items-center gap-x-2">
                     <i className="fa-solid fa-basket-shopping"></i>View Card
                 </button></Link>
-                <Link to='/checkout' className="text-footerText"> <button type="button" className="bg-white  px-5 py-2 text-pColor border border-pColor flex items-center gap-x-2">
+                <Link to='/checkout' className="text-footerText"> <button type="button" onClick={handleClosePopup} className="bg-white  px-5 py-2 text-pColor border border-pColor flex items-center gap-x-2">
                     <i className="fa-solid fa-basket-shopping"></i>Checkout
                 </button></Link>
 
