@@ -1,15 +1,15 @@
-import bookSlider from '../assets/images/bookslider.jpeg'
+import HomeageSlider from '../components/Carousel'
 import BrandPolicy from '../components/BrandPolicy'
 import PopularBook from '../components/PopularBook'
+import Banner from '../components/Banner'
 
 const Homepage = () => {
     return (
         <>
-            <div className=''>
-                <img src={bookSlider} alt="" className=' book-slider' />
-                <BrandPolicy />
-                <PopularBook />
-            </div>
+            <HomeageSlider />
+            <PopularBook />
+            <Banner />
+            <BrandPolicy />
         </>
 
     )
