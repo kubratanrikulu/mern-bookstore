@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 import { removeCartItem } from "../redux/slice/cardSlice";
 import { setTotalCount } from "../redux/slice/cardSlice";
 const Chart = () => {
-    const cartItems = useSelector((state) => state.cart.items);
     const dispatch = useDispatch();
+    const cartItems = useSelector((state) => state.cart.items);
 
     const [totalPrice, setTotalPrice] = useState(0);
     const [books, setBooks] = useState([]);
